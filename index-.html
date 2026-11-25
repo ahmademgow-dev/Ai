@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>استوديو الفيديو المجاني</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: one column — short header, prompt builder, filter bar, card grid grouped by tool type. RTL. */
+:root{
+  --bg:#f3f5f7; --surface:#ffffff; --fg:#14202b; --muted:#566573; --line:#d9e0e6;
+  --accent:#0d6e6e; --accent-ink:#ffffff; --accent-soft:#dcefee;
+  --free:#1f7a3a; --free-bg:#e2f3e7; --daily:#0d5c8f; --daily-bg:#e1eef8;
+  --month:#7a5a00; --month-bg:#f6eed4; --trial:#8a3b2e; --trial-bg:#f7e4df;
+  --display:"Reem Kufi","IBM Plex Sans Arabic",Tahoma,sans-serif;
+  --body:"IBM Plex Sans Arabic",Tahoma,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f161c; --surface:#17212a; --fg:#e6edf2; --muted:#9aabb8; --line:#2a3743;
+  --accent:#4fc1bd; --accent-ink:#06201f; --accent-soft:#16393a;
+  --free:#7fd69a; --free-bg:#173524; --daily:#83c3ef; --daily-bg:#152d40;
+  --month:#e8c766; --month-bg:#3a3014; --trial:#f0a493; --trial-bg:#3d211b; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f161c; --surface:#17212a; --fg:#e6edf2; --muted:#9aabb8; --line:#2a3743;
+  --accent:#4fc1bd; --accent-ink:#06201f; --accent-soft:#16393a;
+  --free:#7fd69a; --free-bg:#173524; --daily:#83c3ef; --daily-bg:#152d40;
+  --month:#e8c766; --month-bg:#3a3014; --trial:#f0a493; --trial-bg:#3d211b; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.7;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px}
+.wrap{max-width:1080px;margin:0 auto;display:flex;flex-direction:column;gap:40px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.3}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:6px}
+
+header{padding-top:40px;display:grid;gap:14px}
+.reel{display:flex;gap:6px;align-items:center;color:var(--muted);font-family:var(--mono);font-size:13px;letter-spacing:.06em}
+.reel i{width:10px;height:14px;border-radius:2px;background:var(--accent);opacity:.85}
+.reel i:nth-child(2n){opacity:.4}
+h1{font-size:clamp(2rem,5vw,3.1rem);font-weight:700}
+.lead{color:var(--muted);max-width:62ch;margin:0;font-size:1.06rem}
+.note{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:.95rem;max-width:72ch}
+.note b{color:var(--fg)}
+
+/* Prompt builder */
+.builder{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:24px;display:grid;gap:18px}
+.builder h2{font-size:1.5rem}
+.builder p{margin:0;color:var(--muted)}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.field{display:grid;gap:6px;min-width:0}
+.field label{font-size:.88rem;font-weight:600;color:var(--muted)}
+input,select{font:inherit;font-size:.95rem;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 12px;width:100%}
+.out{display:grid;gap:10px}
+.out pre{margin:0;direction:ltr;text-align:left;font-family:var(--mono);font-size:.9rem;line-height:1.6;background:var(--bg);border:1px dashed var(--line);border-radius:10px;padding:14px;white-space:pre-wrap;word-break:break-word}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+button{font:inherit;cursor:pointer;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--fg);padding:9px 16px;font-weight:600}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.status{font-size:.9rem;color:var(--free)}
+
+/* Filters */
+.tools-head{display:grid;gap:14px}
+.tools-head h2{font-size:1.7rem}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border-radius:999px;padding:6px 14px;font-weight:500;font-size:.92rem}
+.chip[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.search{max-width:360px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:.85rem;color:var(--muted)}
+
+section.group{display:grid;gap:14px}
+section.group h3{font-size:1.25rem;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+section.group h3 small{font-family:var(--body);font-weight:400;font-size:.9rem;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.card .top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.card h4{margin:0;font-family:var(--display);font-size:1.12rem;font-weight:500;direction:ltr;text-align:right}
+.card p{margin:0;font-size:.93rem;color:var(--muted);flex:1}
+.badge{font-size:.76rem;font-weight:600;padding:2px 9px;border-radius:999px;white-space:nowrap}
+.b-free{color:var(--free);background:var(--free-bg)} .b-daily{color:var(--daily);background:var(--daily-bg)}
+.b-month{color:var(--month);background:var(--month-bg)} .b-trial{color:var(--trial);background:var(--trial-bg)}
+.go{align-self:flex-start;text-decoration:none;font-weight:600;font-size:.92rem;padding:6px 12px;border-radius:8px;background:var(--accent-soft);color:var(--accent)}
+.go:hover{text-decoration:underline}
+.empty{color:var(--muted)}
+.tips{display:grid;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px}
+.tips h2{font-size:1.4rem}
+.tips ol{margin:0;padding-inline-start:20px;display:grid;gap:6px}
+footer{color:var(--muted);font-size:.85rem}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap" dir="rtl" lang="ar">
+  <header>
+    <div class="reel" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><span>&nbsp;FREE · AI · VIDEO</span></div>
+    <h1>استوديو الفيديو المجاني</h1>
+    <p class="lead">كل أدوات توليد الفيديو بالذكاء الاصطناعي اللي تقدر تستخدمها من غير ما تدفع: من نص لفيديو، من صورة لفيديو، أفاتار بيتكلم، مونتاج، صوت وموسيقى، وأدوات مفتوحة المصدر تشغلها على جهازك.</p>
+    <div class="note"><b>معلومة مهمة:</b> المواقع الأونلاين بتدي رصيد مجاني (يومي أو شهري) ومعظمها بيحط علامة مائية. الأدوات <b>المفتوحة المصدر</b> هي الوحيدة المجانية بلا حدود، بس محتاجة كارت شاشة قوي أو تشغيلها من Hugging Face. الخطط بتتغير، فبص على صفحة الأداة قبل ما تعتمد عليها.</div>
+  </header>
+
+  <section class="builder" aria-labelledby="b-title">
+    <h2 id="b-title">اكتب البرومبت بسهولة</h2>
+    <p>معظم الأدوات بتفهم الإنجليزي أحسن. اختار التفاصيل بالعربي، والبرومبت هيطلع جاهز تنسخه وتلصقه في أي أداة.</p>
+    <div class="fields">
+      <div class="field"><label for="f-subject">مين أو إيه في الفيديو؟</label><input id="f-subject" value="an old fisherman" placeholder="مثال: a black cat"></div>
+      <div class="field"><label for="f-action">بيعمل إيه؟</label><input id="f-action" value="pulling a net out of the sea" placeholder="مثال: walking slowly"></div>
+      <div class="field"><label for="f-place">فين؟</label><input id="f-place" value="on a wooden boat near Alexandria at sunrise" placeholder="مثال: in a busy Cairo street"></div>
+      <div class="field"><label for="f-style">الستايل</label>
+        <select id="f-style">
+          <option value="cinematic, photorealistic">سينمائي واقعي</option>
+          <option value="3D animated, Pixar-like style">أنيميشن ثلاثي الأبعاد</option>
+          <option value="anime style">أنمي</option>
+          <option value="vintage 1970s film look, film grain">فيلم قديم</option>
+          <option value="documentary footage, natural look">وثائقي</option>
+          <option value="watercolor painting come to life">لوحة ألوان مائية</option>
+        </select></div>
+      <div class="field"><label for="f-camera">حركة الكاميرا</label>
+        <select id="f-camera">
+          <option value="slow dolly-in">تقرب ببطء</option>
+          <option value="smooth tracking shot following the subject">تتابع الشخص</option>
+          <option value="aerial drone shot">درون من فوق</option>
+          <option value="static tripod shot">ثابتة</option>
+          <option value="slow orbit around the subject">تلف حواليه</option>
+          <option value="handheld camera">محمولة باليد</option>
+        </select></div>
+      <div class="field"><label for="f-light">الإضاءة</label>
+        <select id="f-light">
+          <option value="golden hour warm light">الساعة الذهبية</option>
+          <option value="soft natural daylight">نهار طبيعي</option>
+          <option value="neon night lights, reflections">نيون بالليل</option>
+          <option value="dramatic low-key lighting">درامية غامقة</option>
+          <option value="foggy, moody atmosphere">ضباب</option>
+        </select></div>
+      <div class="field"><label for="f-ratio">مقاس الفيديو</label>
+        <select id="f-ratio">
+          <option value="9:16 vertical">طولي 9:16 (تيك توك / ريلز)</option>
+          <option value="16:9 widescreen">عرضي 16:9 (يوتيوب)</option>
+          <option value="1:1 square">مربع 1:1</option>
+        </select></div>
+    </div>
+    <div class="out">
+      <pre id="prompt" aria-live="polite"></pre>
+      <div class="row"><button class="primary" id="copy" type="button">انسخ البرومبت</button><span class="status" id="copied" role="status"></span></div>
+    </div>
+  </section>
+
+  <section class="tools-head" aria-labelledby="t-title">
+    <h2 id="t-title">الأدوات</h2>
+    <div class="chips" id="chips" role="group" aria-label="نوع الأداة"></div>
+    <input class="search" id="q" type="search" placeholder="دوّر باسم الأداة…" aria-label="بحث">
+    <div class="legend">
+      <span><span class="badge b-free">مجاني بالكامل</span> مفتوح المصدر</span>
+      <span><span class="badge b-daily">رصيد يومي</span> بيتجدد كل يوم</span>
+      <span><span class="badge b-month">رصيد شهري</span> بيتجدد كل شهر/أسبوع</span>
+      <span><span class="badge b-trial">رصيد بداية</span> مرة واحدة عند التسجيل</span>
+    </div>
+  </section>
+
+  <div id="groups" style="display:grid;gap:36px"></div>
+
+  <section class="tips">
+    <h2>إزاي تطلع أكتر من غير فلوس</h2>
+    <ol>
+      <li>جرّب البرومبت الأول في أداة رصيدها يومي (Kling أو PixVerse أو Dreamina)، ولما يعجبك اعمله بجودة أعلى.</li>
+      <li>اعمل صورة الأول بأداة صور مجانية، وبعدين حوّلها لفيديو (Image to Video). النتيجة بتبقى أثبت بكتير.</li>
+      <li>خلي المقاطع 5 ثواني وجمّعها في CapCut، الوشوش بتتغير في المقاطع الطويلة.</li>
+      <li>ضيف صوت من ElevenLabs وموسيقى من Suno، وركّبهم في المونتاج.</li>
+      <li>عايز من غير حدود ومن غير علامة مائية؟ استخدم Wan أو LTX Video على جهازك عن طريق Pinokio أو ComfyUI.</li>
+    </ol>
+  </section>
+  <footer>آخر مراجعة للخطط المجانية: نوفمبر 2026. الحدود والأرصدة بتتغير باستمرار، والمرجع النهائي هو صفحة كل أداة.</footer>
+</div>
+
+<script>
+const CATS=[
+  {id:"t2v",name:"من نص لفيديو / صورة لفيديو",hint:"اكتب وصف أو ارفع صورة وتطلع فيديو"},
+  {id:"avatar",name:"أفاتار بيتكلم",hint:"صورة أو شخصية بتقول النص بتاعك"},
+  {id:"edit",name:"مونتاج وفيديو من سكريبت",hint:"تجميع، ترجمة، فيديوهات سوشيال"},
+  {id:"audio",name:"صوت وموسيقى للفيديو",hint:"تعليق صوتي وموسيقى خلفية"},
+  {id:"open",name:"مفتوح المصدر",hint:"مجاني بلا حدود، على جهازك أو أونلاين"}
+];
+const B={free:["b-free","مجاني بالكامل"],daily:["b-daily","رصيد يومي"],month:["b-month","رصيد شهري"],trial:["b-trial","رصيد بداية"]};
+const TOOLS=[
+  {n:"Kling AI",c:"t2v",t:"daily",u:"https://klingai.com",d:"من أقوى الأدوات في الحركة الواقعية والسينمائية. نص لفيديو وصورة لفيديو."},
+  {n:"Hailuo (MiniMax)",c:"t2v",t:"daily",u:"https://hailuoai.video",d:"ممتاز في المشاهد اللي فيها حركة سريعة وأكشن، وسهل جدًا."},
+  {n:"PixVerse",c:"t2v",t:"daily",u:"https://app.pixverse.ai",d:"إفكتات جاهزة وفيديوهات قصيرة للسوشيال. الرصيد بيتجدد يوميًا."},
+  {n:"Dreamina (CapCut)",c:"t2v",t:"daily",u:"https://dreamina.capcut.com",d:"صور وفيديو وأفاتار بيتكلم في مكان واحد، برصيد يومي."},
+  {n:"Vidu",c:"t2v",t:"daily",u:"https://www.vidu.com",d:"حركة ناعمة وثبات حلو للشخصيات من صورة مرجعية."},
+  {n:"Google Veo (Gemini / AI Studio)",c:"t2v",t:"month",u:"https://aistudio.google.com",d:"جودة عالية جدًا وصوت مدمج. عدد محدود من الفيديوهات المجانية."},
+  {n:"Luma Dream Machine",c:"t2v",t:"month",u:"https://lumalabs.ai/dream-machine",d:"لقطات سينمائية حلوة، الخطة المجانية محدودة وبعلامة مائية."},
+  {n:"Pika",c:"t2v",t:"trial",u:"https://pika.art",d:"تعديل الفيديو بالذكاء الاصطناعي وإفكتات ممتعة."},
+  {n:"Runway",c:"t2v",t:"trial",u:"https://runwayml.com",d:"أدوات احترافية، 125 رصيد مرة واحدة تجرب بيهم."},
+  {n:"HeyGen",c:"avatar",t:"month",u:"https://www.heygen.com",d:"أفاتار واقعي بيتكلم عربي ولغات كتير. فيديوهات قليلة شهريًا بعلامة مائية."},
+  {n:"Vidnoz",c:"avatar",t:"daily",u:"https://www.vidnoz.com",d:"أفاتارات كتير ورصيد يومي، كويس للشرح والتسويق."},
+  {n:"Hedra",c:"avatar",t:"month",u:"https://www.hedra.com",d:"خلي أي صورة أو شخصية تتكلم وتعبّر بالصوت اللي ترفعه."},
+  {n:"D-ID",c:"avatar",t:"trial",u:"https://www.d-id.com",d:"صورة بتتكلم بسرعة، فترة تجربة مجانية."},
+  {n:"CapCut",c:"edit",t:"free",u:"https://www.capcut.com",d:"مونتاج مجاني فيه ترجمة تلقائية وإزالة خلفية وأدوات AI كتير."},
+  {n:"Canva",c:"edit",t:"month",u:"https://www.canva.com",d:"تصميم ومونتاج سهل، وفيه توليد فيديو محدود في الخطة المجانية."},
+  {n:"Clipchamp",c:"edit",t:"free",u:"https://clipchamp.com",d:"محرر فيديو من مايكروسوفت، تصدير 1080p مجاني."},
+  {n:"InVideo AI",c:"edit",t:"month",u:"https://invideo.io",d:"اكتب فكرة ويطلعلك فيديو كامل بمشاهد وتعليق صوتي."},
+  {n:"Fliki",c:"edit",t:"month",u:"https://fliki.ai",d:"حوّل مقال أو سكريبت لفيديو بصوت AI."},
+  {n:"ElevenLabs",c:"audio",t:"month",u:"https://elevenlabs.io",d:"أصوات واقعية جدًا بالعربي، رصيد مجاني كل شهر."},
+  {n:"Suno",c:"audio",t:"daily",u:"https://suno.com",d:"اعمل أغنية أو موسيقى خلفية من وصف بسيط."},
+  {n:"Wan (Alibaba)",c:"open",t:"free",u:"https://huggingface.co/spaces?search=wan",d:"من أقوى نماذج الفيديو المفتوحة. جرّبه على Hugging Face أو شغله محليًا."},
+  {n:"LTX Video",c:"open",t:"free",u:"https://github.com/Lightricks/LTX-Video",d:"سريع جدًا وبيشتغل على كروت شاشة متوسطة."},
+  {n:"HunyuanVideo",c:"open",t:"free",u:"https://github.com/Tencent/HunyuanVideo",d:"نموذج تينسنت المفتوح، جودة عالية ومحتاج جهاز قوي."},
+  {n:"ComfyUI",c:"open",t:"free",u:"https://www.comfy.org",d:"واجهة تشغّل بيها أي نموذج صور أو فيديو على جهازك."},
+  {n:"Pinokio",c:"open",t:"free",u:"https://pinokio.computer",d:"تثبيت أدوات AI بضغطة واحدة من غير برمجة."}
+];
+let cat="all",q="";
+const chips=document.getElementById("chips");
+[{id:"all",name:"الكل"},...CATS].forEach(c=>{
+  const b=document.createElement("button");b.type="button";b.className="chip";b.textContent=c.name;b.dataset.id=c.id;
+  b.setAttribute("aria-pressed",c.id==="all");b.onclick=()=>{cat=c.id;chips.querySelectorAll(".chip").forEach(x=>x.setAttribute("aria-pressed",x.dataset.id===cat));render()};
+  chips.appendChild(b);
+});
+document.getElementById("q").addEventListener("input",e=>{q=e.target.value.trim().toLowerCase();render()});
+function render(){
+  const g=document.getElementById("groups");g.innerHTML="";let any=false;
+  CATS.filter(c=>cat==="all"||c.id===cat).forEach(c=>{
+    const items=TOOLS.filter(t=>t.c===c.id&&(!q||t.n.toLowerCase().includes(q)||t.d.includes(q)));
+    if(!items.length)return;any=true;
+    const s=document.createElement("section");s.className="group";
+    s.innerHTML=`<h3>${c.name} <small>${c.hint}</small></h3><div class="grid"></div>`;
+    const grid=s.querySelector(".grid");
+    items.forEach(t=>{const [cls,lab]=B[t.t];const a=document.createElement("article");a.className="card";
+      a.innerHTML=`<div class="top"><h4>${t.n}</h4><span class="badge ${cls}">${lab}</span></div><p>${t.d}</p><a class="go" href="${t.u}" target="_blank" rel="noopener">افتح الأداة ←</a>`;
+      grid.appendChild(a)});
+    g.appendChild(s);
+  });
+  if(!any)g.innerHTML='<p class="empty">مفيش أداة بالاسم ده. جرّب كلمة تانية أو اختار "الكل".</p>';
+}
+render();
+const ids=["subject","action","place","style","camera","light","ratio"];
+function build(){
+  const v=Object.fromEntries(ids.map(i=>[i,document.getElementById("f-"+i).value.trim()]));
+  const main=[v.subject,v.action,v.place].filter(Boolean).join(" ");
+  const p=`${main||"A beautiful scene"}. ${v.style}, ${v.camera}, ${v.light}, highly detailed, smooth natural motion, ${v.ratio}.`;
+  document.getElementById("prompt").textContent=p;return p;
+}
+ids.forEach(i=>document.getElementById("f-"+i).addEventListener("input",build));build();
+document.getElementById("copy").addEventListener("click",()=>{
+  const p=build(),st=document.getElementById("copied");
+  navigator.clipboard.writeText(p).then(()=>{st.textContent="اتنسخ ✓"},()=>{
+    const r=document.createRange();r.selectNodeContents(document.getElementById("prompt"));const s=getSelection();s.removeAllRanges();s.addRange(r);
+    st.textContent="النص متحدد، اضغط Ctrl+C";});
+  setTimeout(()=>st.textContent="",2500);
+});
+</script>
+</body>
+</html>
